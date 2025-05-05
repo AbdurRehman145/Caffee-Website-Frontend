@@ -1,0 +1,42 @@
+.banner {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+}
+
+.banner-text {
+  position: absolute;
+  top: 50%;
+  left: 35%;
+  transform: translate(-50%, -50%);
+  text-align: left;
+  color: black;
+}
+
+.banner-text h1 {
+  font-size: 3em;
+  margin: 0;
+}
+
+.banner-text p {
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.shop-now {
+  background-color: black;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.shop-now:hover {
+  background-color: #333;
+}

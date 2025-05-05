@@ -1,0 +1,53 @@
+.menu-card{
+    display: flex;
+    flex-direction: column;
+}
+.menu-card img{
+    max-width: 280px;
+    width: 100%;
+}
+.card-details h2{
+    font-size: 22px;
+    font-family: 'Playfair Display', serif;
+    color: 	#6F4E37;
+    text-align: left;
+    margin-bottom: 10px;
+}
+.category-span{
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #1E1E1E;
+    margin-bottom: 10px;
+
+}
+.card-details{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin: 40px 0;
+}
+.amount-span{
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: 	#6F4E37;
+
+}
+.card-details a {
+    top: 110px;
+    background-color: #F9C06A;
+    border-radius: 30px;
+    color: #1E1E1E;
+    text-decoration: none;
+    display: inline-block;
+    position: absolute;
+    left: 20px;
+}
+.menu-card {
+    background-color: #FFF9F1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border:  1px solid #F9C06A;
+}

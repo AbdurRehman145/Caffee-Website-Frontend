@@ -1,62 +1,67 @@
-import { useState } from "react";
-import './TestimonialSlider.css'
+import React, { useState } from "react";
+import "./TestimonialSlider.css";
+
+import user1 from "../../assets/chef.jpg";   // replace with real paths
+import user2 from "../../assets/chef.jpg";
+import user3 from "../../assets/chef.jpg";
 
 const testimonials = [
   {
-    text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
-    name: "Jonny Thomas",
-    role: "Project Manager",
-    img: "https://i.pravatar.cc/100?img=1",
+    image: user1,
+    quote:
+      "Very good quality of food and service. Vast menu with child friendly items as well as local seafood and even entrees for those who dont like seafood. Great place! Thanks. We absolutely love everything there!",
+    name: "De Willamson",
+    title: "Founder & co"
   },
   {
-    text: "Another amazing testimonial from a happy client. Great work and super professional!",
-    name: "Sarah Lee",
-    role: "Marketing Head",
-    img: "https://i.pravatar.cc/100?img=2",
+    image: user2,
+    quote:
+      "Coffee is excellent and the ambience is superb. Staff are knowledgeable and friendly. Highly recommend to every coffee lover around!",
+    name: "Maria Stevens",
+    title: "Coffee Blogger"
   },
   {
-    text: "Wonderful experience! I highly recommend their services to everyone.",
-    name: "Mike Dawson",
-    role: "CEO",
-    img: "https://i.pravatar.cc/100?img=3",
-  },
+    image: user3,
+    quote:
+      "Probably the best espresso I had this year. The beans are roasted to perfection and the desserts pair perfectly.",
+    name: "Kenji Takahashi",
+    title: "Food Critic"
+  }
 ];
 
-function TestimonialSlider() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export default function TestimonialSlider() {
+  const [index, setIndex] = useState(0);
 
-  const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
-    );
-  };
+  const prev = () =>
+    setIndex((i) => (i === 0 ? testimonials.length - 1 : i - 1));
+  const next = () =>
+    setIndex((i) => (i === testimonials.length - 1 ? 0 : i + 1));
 
-  const nextTestimonial = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  const { text, name, role, img } = testimonials[currentIndex];
+  const { image, quote, name, title } = testimonials[index];
 
   return (
-    <div className="testimonial-slider">
-      <div className="testimonial-content">
-        <div className="quote-icon">❝</div>
-        <p className="testimonial-text">{text}</p>
-        <h3 className="testimonial-name">{name}</h3>
-        <p className="testimonial-role">{role}</p>
-        <img className="testimonial-img" src={img} alt={name} />
+    <section className="testimonial-section">
+      {/* arrows */}
+      <button className="nav-arrow left" onClick={prev} aria-label="Previous">
+        <span />
+      </button>
+
+      <div className="testimonial-wrapper">
+        <div className="avatar">
+          <img src={image} alt={name} />
+        </div>
+
+        <div className="testimonial">
+          <div className="quote-mark">❝</div>
+          <p>{quote}</p>
+          <h4>{name}</h4>
+          <span className="title">{title}</span>
+        </div>
       </div>
 
-      <button className="nav-btn prev" onClick={prevTestimonial}>
-        &#8592;
+      <button className="nav-arrow right" onClick={next} aria-label="Next">
+        <span />
       </button>
-      <button className="nav-btn next" onClick={nextTestimonial}>
-        &#8594;
-      </button>
-    </div>
+    </section>
   );
 }
-
-export default TestimonialSlider;

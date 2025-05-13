@@ -1,0 +1,14 @@
+.shop-layout {
+    display: flex;
+    padding: 20px;
+    gap: 30px;
+  }
+  
+  .shop-layout > .sidebar {
+    flex: 0 0 250px;
+  }
+  
+  .shop-layout > .product-grid {
+    flex: 1;
+  }
+  

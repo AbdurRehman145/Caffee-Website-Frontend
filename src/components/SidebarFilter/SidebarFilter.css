@@ -1,0 +1,96 @@
+.sidebar-filter {
+    width: 250px;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    /* border-right: 1px solid #eee; */
+  }
+  .filter-section {
+    margin-bottom: 25px;
+  }
+  
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .filter-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .toggle-icon {
+    font-size: 18px;
+    color: #555;
+  }
+
+  .collapsible-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .menu-list {
+    list-style: none;
+    padding: 10px 0 0;
+    margin: 0;
+  }
+  
+  .menu-list li {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #444;
+    cursor: pointer;
+  }
+  
+  .checkbox-group {
+    margin-top: 10px;
+  }
+  
+  .checkbox-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  
+  .checkbox-group input {
+    margin-right: 8px;
+  }
+  
+  .price-inputs label {
+    font-size: 14px;
+    color: #777;
+    display: block;
+    margin: 10px 0 5px;
+  }
+  
+  .price-inputs input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+  
+  .filter-btn {
+    margin-top: 15px;
+    background-color: #000;
+    border: 1px solid black;
+    color: #fff;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s ease;
+  }
+
+  .filter-btn:hover {
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    border: 1px solid black;
+  }
+  
+  
+ 

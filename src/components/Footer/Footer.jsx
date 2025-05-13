@@ -1,54 +1,100 @@
-import React from 'react'
-import './Footer.css'; 
-const Footer = () => {
-return (
-<>
-<footer className="footer">
+// FooterComponent.jsx
+import { useState } from "react";
+import { ArrowRight, Twitter, Instagram, Linkedin } from "lucide-react";
+import "./Footer.css";
+
+export default function Footer() {
+  const [email, setEmail] = useState("");
+  
+  const handleSubmit = () => {
+    // Handle newsletter subscription
+    console.log("Subscribing email:", email);
+    setEmail("");
+  };
+
+  return (
+    <footer className="footer">
       <div className="footer-container">
-        <div className="footer-section">
-          <h2 className="footer-logo">Bean Scene</h2>
-          <p className="footer-description">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-          </p>
-          <div className="footer-socials">
-            <i className="fab fa-facebook-f"></i>
-            <i className="fab fa-instagram"></i>
-            <i className="fab fa-youtube"></i>
-            <i className="fab fa-twitter"></i>
+        {/* Brand and tagline */}
+        <div className="footer-brand">
+          <div className="brand-header">
+            <span className="since-text">SINCE</span>
+            <h2 className="brand-name">ban's</h2>
+            <span className="year-text">1998</span>
           </div>
+          <p className="tagline">
+            There are people who can't start their day without having a freshly brewed cup of coffee and we understand them.
+          </p>
         </div>
 
+        {/* About section */}
         <div className="footer-section">
-          <h3>About</h3>
-          <ul>
-            <li>Menu</li>
-            <li>Features</li>
-            <li>News & Blogs</li>
-            <li>Help & Support</li>
+          <h3 className="footer-heading">ABOUT</h3>
+          <ul className="footer-links">
+            <li><a href="#">Search</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Account</a></li>
           </ul>
         </div>
 
+        {/* Useful links */}
         <div className="footer-section">
-          <h3>Company</h3>
-          <ul>
-            <li>How we work</li>
-            <li>Terms of service</li>
-            <li>Pricing</li>
-            <li>FAQ</li>
+          <h3 className="footer-heading">USEFUL LINKS</h3>
+          <ul className="footer-links">
+            <li><a href="#">Search</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Account</a></li>
           </ul>
         </div>
 
+        {/* Social media */}
         <div className="footer-section">
-          <h3>Contact Us</h3>
-          <p>Akshya Nagar 1st Block 1st Cross, Ramamurthy nagar, Bangalore-560016</p>
-          <p>+1 202-918-2132</p>
-          <p>beanscene@email.com</p>
-          <p>www.beanscene.com</p>
+          <h3 className="footer-heading">FOLLOW US ON</h3>
+          <ul className="footer-links">
+            <li>
+              <a href="#" className="social-link">
+                <Twitter size={16} className="icon" />
+                Twitter
+              </a>
+            </li>
+            <li>
+              <a href="#" className="social-link">
+                <Instagram size={16} className="icon" />
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a href="#" className="social-link">
+                <Linkedin size={16} className="icon" />
+                Linkedin
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Newsletter subscription */}
+        <div className="footer-newsletter">
+          <h2 className="newsletter-heading">Subscribe.</h2>
+          <p className="newsletter-text">
+            Subscribe to our newsletter to receive news on update.
+          </p>
+          <div className="subscription-form">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email address."
+              className="email-input"
+            />
+            <button
+              onClick={handleSubmit}
+              className="submit-button"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </div>
         </div>
       </div>
     </footer>
-</>
-  )
+  );
 }
-export default Footer

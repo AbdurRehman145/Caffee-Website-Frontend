@@ -14,8 +14,8 @@ const Navbar = () => {
         <span>1998</span>
       </div>
       <ul className="nav-links">
-        <li><a href="#">HOME</a></li>
-        <li><a href="#">SHOP</a></li>
+        <li><a href="/">HOME</a></li>
+        <li><a href="/shop">SHOP</a></li>
         <li><a href="#">BLOG</a></li>
         <li><a href="#">ABOUT US</a></li>
         <li><a href="#">CONTACT</a></li>

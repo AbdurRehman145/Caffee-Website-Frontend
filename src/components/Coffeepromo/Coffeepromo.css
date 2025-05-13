@@ -107,32 +107,34 @@
 
   .plant-image {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -40px;
+    right: -40px;
     margin: 10px;
-    width: 300px;
-    opacity: 0.2; /* Make it decorative */
-    pointer-events: none; /* Ignore mouse events */
+    width: 320px;
+    opacity: 0.2;
+    pointer-events: none; 
+    /* border: 2px dashed red; */
+
   }
   
   .plant-image img {
     width: 100%;
-    height: 100%;
+    
     height: auto;
   }
 
   .beans-image {
     position: absolute;
-    top: -0;
-    left: 0;
+    top: -10px;
+    left: -10px;
     margin: 10px;
-    width: 150px;
+    width: 120px;
     opacity: 0.1; /* Make it decorative */
     pointer-events: none; /* Ignore mouse events */
   }
   
   .beans-image img {
     width: 100%;
-    height: 100%;
+   
     height: auto;
   }

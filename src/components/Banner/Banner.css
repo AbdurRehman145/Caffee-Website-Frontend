@@ -2,11 +2,12 @@
   position: relative;
   text-align: center;
   color: white;
+  
 }
 
 .banner-image {
   width: 100%;
-  height: auto;
+  height: 650px;
 }
 
 .banner-text {

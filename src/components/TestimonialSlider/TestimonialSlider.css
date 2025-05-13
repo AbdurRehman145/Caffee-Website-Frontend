@@ -1,106 +1,115 @@
-/* ===== Layout container ===== */
-.testimonial-section {
+/* --- layout shell ------------------------------------------------ */
+.testi-section {
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 80px 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 60px;
+  padding: 100px 100px;
+  background: #fdf7f5;            /* light paper‑like tone */
+  overflow: hidden;
+  width: 100vw;        /* Full viewport width */
+  max-width: 100vw;    /* Prevent constraints */
   font-family: "Segoe UI", sans-serif;
 }
-
-/* ===== Navigation arrows ===== */
-.nav-arrow {
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: 60px;
-  height: 60px;
-  position: relative;
-  opacity: 0.3;
-  transition: opacity 0.25s ease;
-}
-
-.nav-arrow:hover { opacity: 0.7; }
-
-.nav-arrow span,
-.nav-arrow span::before {
-  content: "";
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-right: 3px solid #cfcfcf;
-  border-bottom: 3px solid #cfcfcf;
-  transform: rotate(45deg);
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-}
-
-/* flip arrow for left side */
-.nav-arrow.left span { transform: rotate(225deg); }
-
-/* ===== Avatar image ===== */
-.avatar {
-  flex: 0 0 260px;
-  height: 260px;
+/* customer photo */
+.testi-img-wrapper {
+  flex: 0 0 330px;
+  width: 330px;
+  height: 365px;
   overflow: hidden;
-  margin-right: 60px;
+  border-radius: 5px;
+  object-position: 0%;
+  /* border: solid;
+  border-color: black; */
 }
-
-.avatar img {
-  width: 100%;
+.testi-img-wrapper img {
+  /* width: 100%; */
   height: 100%;
   object-fit: cover;
 }
 
-/* ===== Testimonial text ===== */
-.testimonial-wrapper {
-  display: flex;
-  align-items: center;
-  max-width: 850px;
-  margin: 0 auto;
-}
-
-.testimonial {
+/* quote block */
+.testi-text {
   text-align: center;
-  padding: 0 15px;
+  position: relative;
 }
-
-.quote-mark {
-  font-size: 46px;
-  color: #b89a74;
-  line-height: 0;
-  margin-bottom: 20px;
+.testi-text .quote-mark {
+  color: #b08968;
+  font-size: 48px;
+  display: block;
+  margin-bottom: 30px;
+  line-height: 1;
 }
-
-.testimonial p {
+.testi-text p {
   font-size: 24px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #222;
   margin-bottom: 40px;
 }
-
-.testimonial h4 {
+.testi-text h4 {
   font-size: 20px;
   font-weight: 600;
-  color: #222;
+  letter-spacing: 0.5px;
   margin-bottom: 6px;
 }
-
-.title {
-  font-size: 16px;
-  color: #888;
+.testi-text .role {
+  color: #777;
+  font-size: 15px;
 }
 
-/* ===== Responsive adjustments ===== */
-@media (max-width: 900px) {
-  .testimonial-section { flex-direction: column; }
-  .nav-arrow { position: absolute; top: 50%; translate: 0 -50%; }
-  .nav-arrow.left  { left: 10px; }
-  .nav-arrow.right { right: 10px; }
-  .testimonial-wrapper { flex-direction: column; }
-  .avatar { margin: 0 0 30px; }
-  .testimonial p { font-size: 18px; }
+/* arrows */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 58px;
+  height: 58px;
+  border: none;
+  background: #fdf7f5;      
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+
+}
+.arrow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border-top: 3px solid #bdbdbd;
+  border-right: 3px solid #bdbdbd;
+  transform: rotate(45deg);
+  transition: border-color 0.25s ease;
+}
+.arrow.left { left: 0;}
+.arrow.right { right: 10px; }
+.arrow.left::before { transform: rotate(-135deg); }
+
+.arrow:hover::before { border-color: #0c0c0c; }
+
+ @media (max-width: 900px) {
+  .testi-section { flex-direction: column; gap: 40px; }
+  .arrow { top: auto; bottom: 40px; transform: none; }
+  .arrow.left { left: calc(50% - 80px); }
+  .arrow.right { right: calc(50% - 80px); }
+  .testi-text p { font-size: 20px; }
+} 
+
+
+.plant-image {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  margin: 10px;
+  width: 300px;
+  opacity: 0.2; /* Make it decorative */
+  pointer-events: none; /* Ignore mouse events */
+}
+
+.plant-image img {
+  width: 100%;
+  height: 100%;
+  height: auto;
 }

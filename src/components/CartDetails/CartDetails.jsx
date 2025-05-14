@@ -5,7 +5,7 @@ import product from '../../assets/product1.png';
 const CartDetails = () => {
   const [quantity, setQuantity] = useState(2);
 
-  const unitPrice = 2800;
+  const unitPrice = 180;
   const priceInclTax = unitPrice * quantity;
   const salesTax = 854;
   const fbrCharges = 1;
@@ -17,13 +17,13 @@ const CartDetails = () => {
   return (
     <div className="cart-container">
       <div className="cart-left">
-        <h2>Your Bag ({quantity})</h2>
+        <h2>Your Cart ({quantity})</h2>
         <div className="cart-item">
           <img src= {product} alt="Fabrics 2 Piece" />
           <div className="item-details">
-            <p className="title">Fabrics 2 Piece | Top and Bottom</p>
-            <p><strong>PKR {unitPrice}</strong></p>
-            <p>Size: <strong>2PC</strong></p>
+            <p className="title">Light Brew</p>
+            <p><strong>$ {unitPrice}</strong></p>
+            <p>Size: <strong>1 lb</strong></p>
             <p className="in-stock">In Stock</p>
             <div className="actions">
               <button>Edit</button>

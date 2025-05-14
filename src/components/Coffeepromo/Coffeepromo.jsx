@@ -3,7 +3,7 @@ import "./CoffeePromo.css";
 import coffeeMan from '../../assets/coffee-beans.png'; 
 import coffeePlant from '../../assets/coffee-plant.png'; 
 import coffeeBeans from '../../assets/coffee-beans-with-leafs.png'; 
-import coffeePlant2 from '../../assets/coffee-plant-2.png'; 
+
 
 const CoffeePromo = () => {
   return (

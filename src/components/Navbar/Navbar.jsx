@@ -31,9 +31,11 @@ const Navbar = () => {
       <button>
        <FontAwesomeIcon icon={faHeart} /> 
       </button>
-      <button>
-       <FontAwesomeIcon icon={faShoppingCart} /> 
-      </button>
+      <a href="/cart">
+        <button>
+         <FontAwesomeIcon icon={faShoppingCart} /> 
+        </button>
+      </a>
     </div>
      
     </nav>

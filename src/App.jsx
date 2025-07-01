@@ -9,22 +9,32 @@ import Product from './pages/Product/Product';
 import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import OrderConfirmed from './pages/OrderConfirmed/OrderConfirmed';
-
+import ProductDetails from './components/ProductDetails/ProductDetails';
+import { CartProvider  } from "./components/CartDetails/CartContext"; 
+import { CheckoutProvider } from './components/Contexts/CheckoutContext';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path='/' element={<Home/>} />
-        <Route path='/shop' element={<Shop/>} />
-        <Route path='/product' element={<Product/>} />
-        <Route path='/cart' element={<Cart/>} />
-        <Route path='/checkout' element={<Checkout/>} />
-         <Route path='/orderConfirmed' element={<OrderConfirmed/>} />
-      </Routes>
-      <Footer/>
-    </BrowserRouter>
+    
+      <BrowserRouter>
+      <CartProvider>
+      <CheckoutProvider>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='/shop' element={<Shop/>} />
+          <Route path='/product' element={<Product/>} />
+          <Route path='/product' element={<Product/>} />
+          <Route path='/cart' element={<Cart/>} />
+          <Route path='/checkout' element={<Checkout/>} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path='/order-confirmed' element={<OrderConfirmed/>} />
+        </Routes>
+        <Footer/>
+        </CheckoutProvider>
+    </CartProvider>
+      </BrowserRouter>
+      
   );
 };
 

@@ -1,99 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './HomeProducts.css';
-import coffee1 from '../../assets/product1.png';
-import coffee2 from '../../assets/product1.png';
-import coffee3 from '../../assets/product1.png';
-import coffee4 from '../../assets/product1.png';
-// ... other imports
-
-const products = [
-    {
-        id: 1,
-        name: 'Brew Coffee Beans',
-        price: 80,
-        oldPrice: 100,
-        label: 'soldout',
-        image: coffee1,
-      },
-      {
-        id: 2,
-        name: 'Cold Brew Coffee Beans',
-        price: 80,
-        oldPrice: 100,
-        label: 'sale',
-        discount: '20%',
-        image: coffee2,
-      },
-      {
-        id: 3,
-        name: 'Latte Macchiato Coffee',
-        price: 130,
-        oldPrice: 150,
-        label: 'sale',
-        discount: '13%',
-        image: coffee3,
-      },
-      {
-        id: 4,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee4,
-      },
-      {
-        id: 5,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee2,
-      },
-      {
-        id: 6,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee1,
-      },
-      {
-        id: 7,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee3,
-      },
-      {
-        id: 8,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee4,
-      },
-      {
-        id: 9,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee4,
-      },
-      {
-        id: 10,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee4,
-      },
-      {
-        id: 11,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee4,
-      },
-      {
-        id: 12,
-        name: 'Columbia Black Coffee',
-        price: 150,
-        image: coffee4,
-      }
-];
-const itemsPerPage = 4;
+import defaultProductImage from '../../assets/product1.png'; // Fallback image
 
 const HomeProducts = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const maxIndex = 0.6;
+  const maxIndex = Math.max(0, Math.ceil(products.length / 4) - 1) * 0.3;
 
   const scroll = (direction) => {
     if (direction === 'left' && currentIndex > 0) {
@@ -105,38 +20,107 @@ const HomeProducts = () => {
 
   const translateX = -currentIndex * 89;
 
+  useEffect(() => {
+    fetch('http://localhost:5000/products')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
+      .then((data) => {
+       
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          setProducts([]);
+          setError('Unexpected data format received');
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="recent-products-section">
+        <h2>Recent Products</h2>
+        <p>Loading products...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="recent-products-section">
+        <h2>Recent Products</h2>
+        <p className="error-message">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="recent-products-section">
       <h2>Recent Products</h2>
       <p>Choose your coffee</p>
       <div className="carousel-container">
-        <button className="arrow-prod left" onClick={() => scroll('left')}>&#8249;</button>
+        <button 
+          className="arrow-prod left" 
+          onClick={() => scroll('left')}
+          disabled={currentIndex <= 0}
+        >
+          &#8249;
+        </button>
 
         <div className="carousel-wrapper">
           <div
             className="product-carousel animated-carousel"
             style={{ transform: `translateX(${translateX}%)` }}
           >
-            {products.map((product) => (
-              <div className="product-card-home" key={product.id}>
-                <div className="image-wrapper">
-                  <a href="/product"><img src={product.image} alt={product.name} /></a>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <div className="product-card-home" key={product._id || product.id}>
+                  <div className="image-wrapper">
+                    <a href={`/products/${product.id}`}>
+                      <img 
+                        src={product.image || defaultProductImage} 
+                        alt={product.name} 
+                        onError={(e) => {
+                          e.target.src = defaultProductImage;
+                        }}
+                      />
+                    </a>
+                  </div>
+                  <div className="product-info-home">
+                    <p className="product-name-home">{product.name}</p>
+                    <p className="product-price-home">
+                      <strong>${product.price}</strong>
+                      {product.old_price && (
+                        <span className="old-price-home">
+                          ${product.old_price}
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 </div>
-                <div className="product-info-home">
-                  <p className="product-name-home">{product.name}</p>
-                  <p className="product-price-home">
-                    <strong>${product.price.toFixed(2)}</strong>
-                    {product.oldPrice && (
-                      <span className="old-price-home">${product.oldPrice.toFixed(2)}</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>No products available</p>
+            )}
           </div>
         </div>
 
-        <button className="arrow-prod right" onClick={() => scroll('right')}>&#8250;</button>
+        <button 
+          className="arrow-prod right" 
+          onClick={() => scroll('right')}
+          disabled={currentIndex >= maxIndex}
+        >
+          &#8250;
+        </button>
       </div>
     </div>
   );

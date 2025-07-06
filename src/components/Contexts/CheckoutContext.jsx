@@ -4,6 +4,7 @@ import { createContext, useContext, useState } from 'react';
 const CheckoutContext = createContext();
 
 export function CheckoutProvider({ children }) {
+
   const [checkoutData, setCheckoutData] = useState({
     customerDetails: {
       firstName: '',
@@ -19,6 +20,8 @@ export function CheckoutProvider({ children }) {
     paymentStatus: 'Pending',
     orderStatus: 'Processing',
     estimatedDelivery: '',
+    orderTotals: null,
+    orderItems: []
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,8 +40,22 @@ export function CheckoutProvider({ children }) {
     // Generate random order number
     const orderNumber = '#ORD-' + Math.floor(10000 + Math.random() * 90000);
         
-    // Set estimated delivery as days instead of dates
-    const estimatedDelivery = "5-9 business days";
+    const today = new Date();
+    const deliveryDate = new Date(today);
+    
+    // Add 7 business days (skipping weekends)
+    let businessDaysAdded = 0;
+    while (businessDaysAdded < 7) {
+      deliveryDate.setDate(deliveryDate.getDate() + 1);
+      // Check if it's a weekday (Monday = 1, Friday = 5)
+      if (deliveryDate.getDay() >= 1 && deliveryDate.getDay() <= 5) {
+        businessDaysAdded++;
+      }
+    }
+    
+    // Format as ISO string for database storage
+    const estimatedDelivery = deliveryDate.toISOString();
+
         
     updateCheckoutData({
       orderNumber,
@@ -51,22 +68,28 @@ export function CheckoutProvider({ children }) {
   // Function to submit order to database
    // In your CheckoutContext.jsx, update the submitOrder function
 
-const submitOrder = async (cartItems, totals) => {
+const submitOrder = async (cartItems, totals, customerDetails) => {
   if (isSubmitting) return;
   
   setIsSubmitting(true);
   
   try {
     // Generate order details
-    const { orderNumber, estimatedDelivery } = confirmOrder();
-    
+  const { orderNumber, estimatedDelivery } = confirmOrder();
+
+    // Store order totals and items in checkout data
+  updateCheckoutData({
+    orderTotals: totals,
+    orderItems: cartItems
+  });
+
     // Prepare customer data for database
-    const customerData = {
-      name: `${checkoutData.customerDetails.firstName} ${checkoutData.customerDetails.lastName}`,
-      email: checkoutData.customerDetails.email,
-      phone: checkoutData.customerDetails.mobile,
-      address: `${checkoutData.customerDetails.address}`,
-    };
+  const customerData = {
+    name: `${customerDetails.firstName} ${customerDetails.lastName}`,
+    email: customerDetails.email,
+    phone: customerDetails.mobile,
+    address: `${customerDetails.address}, ${customerDetails.city}, ${customerDetails.country}`,
+  };
 
     
 
@@ -76,10 +99,10 @@ const submitOrder = async (cartItems, totals) => {
       subtotal: totals.subtotal,
       shipping_cost: totals.shipping,
       total_amount: totals.finalTotal,
-      payment_method: 'COD',
+      payment_method: totals.paymentMethod || 'COD',
       status: 'Processing',
       estimated_delivery: estimatedDelivery,
-      shipping_method: 'Fixed',
+      shipping_method: totals.shippingMethod || 'International Shipping',
     };
 
     // Prepare order items data for database

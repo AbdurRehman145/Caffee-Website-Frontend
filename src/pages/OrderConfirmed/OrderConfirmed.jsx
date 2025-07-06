@@ -17,14 +17,31 @@ export default function OrderConfirmed() {
   const toggleShipping = () => setIsShippingExpanded(!isShippingExpanded);
   const toggleOrderDetails = () => setIsOrderDetailsExpanded(!isOrderDetailsExpanded);
 
-  // Get cart totals
-  const { subtotal, salesTax, fbrCharges, total } = getCartTotals();
+  const orderTotals = checkoutData.orderTotals || getCartTotals();
+  const orderItems = checkoutData.orderItems || cartItems;
+
+  const subtotal = orderTotals.subtotal || 0;
+  const shipping = orderTotals.shipping;
+  const discount = orderTotals.discount || 0;
+  const finalTotal = orderTotals.finalTotal || (subtotal + shipping - discount);
   
-  // Fixed shipping cost
-  const shipping = 220;
-  
-  // Calculate final total with shipping
-  const finalTotal = total + shipping;
+  // Format estimated delivery date for display
+  const formatDeliveryDate = (dateString) => {
+    if (!dateString) return 'May 20 - May 24, 2025';
+    
+    const date = new Date(dateString);
+    const options = { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    };
+    
+    // Create end date (3 days after estimated delivery for range)
+    const endDate = new Date(date);
+    endDate.setDate(endDate.getDate() + 3);
+    
+    return `${date.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
+  };
   
   // Handle continue shopping
   const handleContinueShopping = () => {
@@ -95,7 +112,8 @@ export default function OrderConfirmed() {
               </div>
 
               <div>
-                <p className="value">Fixed - $ {shipping.toFixed(2)}</p>
+                <p className="label-details">Shipping Method</p>
+                <p className="value">{orderTotals.shippingMethod || 'International Shipping'} - $ {shipping.toFixed(2)}</p>
               </div>
             </div>
           )}
@@ -116,7 +134,7 @@ export default function OrderConfirmed() {
               <div className="grid-container-single">
                 <div className="detail-item">
                   <span>Payment Method:</span>
-                  <span className="detail-value">Cash on Delivery</span>
+                  <span className="detail-value">{orderTotals.paymentMethod || 'Cash on Delivery'}</span>
                 </div>
                 <div className="detail-item">
                   <span>Payment Status:</span>
@@ -128,7 +146,7 @@ export default function OrderConfirmed() {
                 </div>
                 <div className="detail-item">
                   <span>Estimated Delivery:</span>
-                  <span className="detail-value">{checkoutData.estimatedDelivery || 'May 20 - May 24, 2025'}</span>
+                  <span className="detail-value">{formatDeliveryDate(checkoutData.estimatedDelivery)}</span>
                 </div>
               </div>
             </div>
@@ -153,7 +171,7 @@ export default function OrderConfirmed() {
 
         {/* Items */}
         <div className="summary-items">
-          {cartItems.map((item, index) => (
+          {orderItems.map((item, index) => (
             <div key={index} className="summary-item">
               <div className="item-image-container">
                 <img 
@@ -167,7 +185,7 @@ export default function OrderConfirmed() {
                 <h4 className="item-name">{item.name}</h4>
                 {item.size && <div className="item-info">Size: {item.size}</div>}
                 <div className="item-info">Qty: {item.quantity}</div>
-                <div className="item-price">$ {item.price.toFixed(2)}</div>
+                <div className="item-price">$ {(item.price * item.quantity).toFixed(2)}</div>
               </div>
             </div>
           ))}
@@ -176,20 +194,18 @@ export default function OrderConfirmed() {
         {/* Cost Breakdown */}
         <div className="cost-breakdown">
           <div className="cost-item">
-            <span>Price incl tax</span>
+            <span>Subtotal</span>
             <span>$ {subtotal.toFixed(2)}</span>
           </div>
+          {discount > 0 && (
+            <div className="cost-item discount-item">
+              <span>Discount {orderTotals.appliedVoucher?.code ? `(${orderTotals.appliedVoucher.code})` : ''}</span>
+              <span>- $ {discount.toFixed(2)}</span>
+            </div>
+          )}
           <div className="cost-item">
-            <span>Shipping</span>
+            <span>Shipping ({orderTotals.shippingMethod || 'International Shipping'})</span>
             <span>$ {shipping.toFixed(2)}</span>
-          </div>
-          <div className="cost-item">
-            <span>Sales Tax</span>
-            <span>$ {salesTax.toFixed(2)}</span>
-          </div>
-          <div className="cost-item">
-            <span>FBR service charges</span>
-            <span>$ {fbrCharges.toFixed(2)}</span>
           </div>
         </div>
 

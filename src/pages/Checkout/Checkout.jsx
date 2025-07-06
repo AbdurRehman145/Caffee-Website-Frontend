@@ -28,12 +28,14 @@ export default function CheckoutPage() {
     country: checkoutData.customerDetails.country || 'Pakistan',
     region: checkoutData.customerDetails.region || 'Islamabad Capital Territory',
     city: checkoutData.customerDetails.city || 'Islamabad',
+    shippingMethod: 'International Shipping',
+    paymentMethod: 'COD'
   });
 
-  const { subtotal, salesTax, fbrCharges, total } = getCartTotals();
+  const { subtotal, discount, total, appliedVoucher } = getCartTotals();
   
-  // Fixed shipping cost
-  const shipping = 220;
+  // Calculate shipping cost based on selected method
+  const shipping = formData.shippingMethod === 'Free' ? 0 : 220;
   
   // Calculate final total with shipping
   const finalTotal = total + shipping;
@@ -124,17 +126,20 @@ export default function CheckoutPage() {
         }
       });
       
-      // Prepare totals object
+     
+      // Prepare totals object with voucher info and selected methods
       const totals = {
         subtotal,
-        salesTax,
-        fbrCharges,
+        discount,
         shipping,
-        finalTotal
+        finalTotal,
+        appliedVoucher,
+        shippingMethod: formData.shippingMethod,
+        paymentMethod: formData.paymentMethod
       };
       
       // Submit order to database
-      const result = await submitOrder(cartItems, totals);
+      const result = await submitOrder(cartItems, totals, formData);
       
       if (result.success) {
         // Clear the cart after successful order submission
@@ -326,9 +331,30 @@ export default function CheckoutPage() {
 
             <h3 className="subsection-title-checkout">SHIPPING METHOD</h3>
             <div className="shipping-method-checkout">
-              <input type="radio" id="fixed-shipping" name="shipping-method" checked readOnly />
-              <label htmlFor="fixed-shipping">Fixed</label>
-              <span className="shipping-price-checkout">$ {shipping.toFixed(2)}</span>
+              <div style={{ marginBottom: '10px' }}>
+                <input 
+                  type="radio" 
+                  id="international-shipping" 
+                  name="shipping-method" 
+                  value="International Shipping"
+                  checked={formData.shippingMethod === 'International Shipping'}
+                  onChange={(e) => setFormData(prev => ({ ...prev, shippingMethod: e.target.value }))}
+                />
+                <label htmlFor="international-shipping">International Shipping</label>
+                <span className="shipping-price-checkout">$ 220.00</span>
+              </div>
+              <div>
+                <input 
+                  type="radio" 
+                  id="free-shipping" 
+                  name="shipping-method" 
+                  value="Free"
+                  checked={formData.shippingMethod === 'Free'}
+                  onChange={(e) => setFormData(prev => ({ ...prev, shippingMethod: e.target.value }))}
+                />
+                <label htmlFor="free-shipping">Free</label>
+                <span className="shipping-price-checkout">$ 0.00</span>
+              </div>
             </div>
           </div>
         </div>
@@ -345,14 +371,31 @@ export default function CheckoutPage() {
           </div>
           <div className={`section-content-checkout ${openSections.payment ? 'open' : 'closed'}`}>
             <div className="payment-method-checkout">
-              <input type="radio" id="cod" name="payment-method" checked readOnly />
+            <div style={{ marginBottom: '15px' }}>
+              <input 
+                type="radio" 
+                id="cod" 
+                name="payment-method" 
+                value="COD"
+                checked={formData.paymentMethod === 'COD'}
+                onChange={(e) => setFormData(prev => ({ ...prev, paymentMethod: e.target.value }))}
+              />
               <label htmlFor="cod">COD</label>
-              <svg className="check-icon-checkout" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="green" strokeWidth="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
               <span className="payment-note-checkout">PAYMENT WILL BE COLLECTED AT THE TIME OF DELIVERY</span>
             </div>
+            <div>
+              <input 
+                type="radio" 
+                id="credit-card" 
+                name="payment-method" 
+                value="Credit Card"
+                checked={formData.paymentMethod === 'Credit Card'}
+                onChange={(e) => setFormData(prev => ({ ...prev, paymentMethod: e.target.value }))}
+              />
+              <label htmlFor="credit-card">Credit Card</label>
+              <span className="payment-note-checkout">SECURE ONLINE PAYMENT</span>
+            </div>
+          </div>
           </div>
         </div>
         
@@ -396,22 +439,27 @@ export default function CheckoutPage() {
             ))}
           </div>
 
-          <div className="voucher-section-checkout">
-            <h3 className="voucher-title-checkout">REDEEM YOUR VOUCHER</h3>
-            <div className="voucher-input-checkout">
-              <input type="text" placeholder="Enter Code" />
-              <button type="button" className="apply-button-checkout">APPLY</button>
-            </div>
-          </div>
-
           <div className="price-details-checkout">
             <h3 className="price-title-checkout">ORDER SUMMARY</h3>
             <div className="price-list-checkout">
-              <div className="price-item-checkout"><span>Price incl. tax</span><span>$ {subtotal.toFixed(2)}</span></div>
-              <div className="price-item-checkout"><span>Shipping</span><span>$ {shipping.toFixed(2)}</span></div>
-              <div className="price-item-checkout"><span>Sales Tax</span><span>$ {salesTax.toFixed(2)}</span></div>
-              <div className="price-item-checkout"><span>FBR service charges</span><span>$ {fbrCharges.toFixed(2)}</span></div>
-              <div className="price-total-checkout"><span>Total</span><span>$ {finalTotal.toFixed(2)}</span></div>
+              <div className="price-item-checkout">
+                <span>Subtotal</span>
+                <span>$ {subtotal.toFixed(2)}</span>
+              </div>
+              {discount > 0 && (
+                <div className="price-item-checkout" style={{ color: 'green' }}>
+                  <span>Discount ({appliedVoucher.code})</span>
+                  <span>- $ {discount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="price-item-checkout">
+                <span>Shipping</span>
+                <span>$ {shipping.toFixed(2)}</span>
+              </div>
+              <div className="price-total-checkout">
+                <span>Total</span>
+                <span>$ {finalTotal.toFixed(2)}</span>
+              </div>
             </div>
           </div>
         </div>

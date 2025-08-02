@@ -37,9 +37,14 @@ const CollapsibleSection = ({ title, isOpen, toggleOpen, children }) => {
 
 const SidebarFilter = ({ filters, onFilterChange, productCounts }) => {
   const [menuOpen, setMenuOpen] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(true);
   const [availabilityOpen, setAvailabilityOpen] = useState(true);
   const [priceOpen, setPriceOpen] = useState(true);
   
+  const handleSearchChange = (value) => {
+    onFilterChange({ ...filters, search: value });
+  };
+
   const handleAvailabilityChange = (type) => {
     const newAvailability = { ...filters.availability };
     newAvailability[type] = !newAvailability[type];
@@ -59,6 +64,7 @@ const SidebarFilter = ({ filters, onFilterChange, productCounts }) => {
 
   const clearAllFilters = () => {
     onFilterChange({
+      search: '',
       availability: { inStock: false, outOfStock: false },
       price: { min: '', max: '' }
     });
@@ -66,6 +72,28 @@ const SidebarFilter = ({ filters, onFilterChange, productCounts }) => {
   
   return (
     <div className="sidebar-filter">
+      
+      <CollapsibleSection
+        title="Search"
+        isOpen={searchOpen}
+        toggleOpen={() => setSearchOpen(!searchOpen)}
+      >
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={filters.search || ''}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="search-input"
+          />
+          <div className="search-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </div>
+        </div>
+      </CollapsibleSection>
       
       <CollapsibleSection
         title="Availability"
@@ -137,8 +165,10 @@ const ProductGrid = ({ products, error }) => {
 
   // Reset to first page when products change
   useEffect(() => {
-    setCurrentPage(1);
-  }, [products]);
+  if (currentPage !== 1) return; // Don't reset the page if it's already not the first page
+  setCurrentPage(1); // Reset to the first page if the page number is 1
+  }, [products]);  // Only trigger when products change
+
 
   if (error) {
     return <div className="error-container">{error}</div>;
@@ -150,17 +180,15 @@ const ProductGrid = ({ products, error }) => {
 
   return (
     <div className="product-grid-container">
-      <div className="products-header">
-        <span className="products-count">
-          Showing {currentProducts.length} of {products.length} products
-        </span>
-      </div>
-      
       <div className="product-grid">
         {currentProducts.map((product) => (
           <div className="product-card" key={product._id || product.id}>
             <div className="image-wrapper">
-              {product.label && (
+              {/* Dynamic stock label */}
+              {!product.in_stock && (
+                <span className="label soldout">Sold Out</span>
+              )}
+              {product.label && product.in_stock && (
                 <span className={`label ${product.label.toLowerCase() === "soldout" ? "soldout" : "sale"}`}>
                   {product.label}
                 </span>
@@ -183,6 +211,12 @@ const ProductGrid = ({ products, error }) => {
                 {product.old_price && product.old_price !== product.price && (
                   <span className="old">${parseFloat(product.old_price).toFixed(2)}</span>
                 )}
+              </div>
+              {/* Stock status indicator */}
+              <div className="stock-status">
+                <span className={`stock-indicator ${product.in_stock ? 'in-stock' : 'out-of-stock'}`}>
+                  {product.in_stock ? 'In Stock' : 'Out of Stock'}
+                </span>
               </div>
             </div>
           </div>
@@ -224,37 +258,76 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
+    search: '',
     availability: { inStock: false, outOfStock: false },
     price: { min: '', max: '' }
   });
 
-  // Fetch products on component mount
+  // Function to fetch products from API
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/products');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setAllProducts(data);
+        setFilteredProducts(data);
+      } else {
+        setAllProducts([]);
+        setFilteredProducts([]);
+        setError('Unexpected data format received');
+      }
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setError('Failed to load products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial fetch on component mount
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:5000/products')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setAllProducts(data);
-          setFilteredProducts(data);
-        } else {
-          setAllProducts([]);
-          setFilteredProducts([]);
-          setError('Unexpected data format received');
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching products:', err);
-        setError('Failed to load products.');
-        setLoading(false);
-      });
+    fetchProducts();
   }, []);
+
+  // Set up real-time updates with polling
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchProducts();
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Alternative: WebSocket connection for real-time updates
+  // Uncomment and modify this section if you have WebSocket support on your backend
+  /*
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:5000/ws');
+    
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'STOCK_UPDATE') {
+        setAllProducts(prev => prev.map(product => 
+          product.id === data.productId 
+            ? { ...product, in_stock: data.in_stock }
+            : product
+        ));
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+  */
 
   // Apply filters whenever filters or products change
   useEffect(() => {
@@ -262,16 +335,23 @@ const Shop = () => {
 
     let filtered = [...allProducts];
 
-    // Apply availability filter
+    // Apply search filter
+    if (filters.search && filters.search.trim() !== '') {
+      const searchTerm = filters.search.toLowerCase().trim();
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        (product.description && product.description.toLowerCase().includes(searchTerm)) ||
+        (product.category && product.category.toLowerCase().includes(searchTerm))
+      );
+    }
+
+    // Apply availability filter based on in_stock property
     const { inStock, outOfStock } = filters.availability;
     if (inStock || outOfStock) {
       filtered = filtered.filter(product => {
-        const isInStock = product.stock > 0 || !product.hasOwnProperty('stock') || product.label?.toLowerCase() !== 'soldout';
-        const isOutOfStock = product.stock === 0 || product.label?.toLowerCase() === 'soldout';
-        
         if (inStock && outOfStock) return true;
-        if (inStock) return isInStock;
-        if (outOfStock) return isOutOfStock;
+        if (inStock) return product.in_stock === true;
+        if (outOfStock) return product.in_stock === false;
         return false;
       });
     }
@@ -291,14 +371,10 @@ const Shop = () => {
     setFilteredProducts(filtered);
   }, [allProducts, filters]);
 
-  // Calculate product counts for filter display
+  // Calculate product counts for filter display based on in_stock property
   const productCounts = {
-    inStock: allProducts.filter(product => 
-      product.stock > 0 || !product.hasOwnProperty('stock') || product.label?.toLowerCase() !== 'soldout'
-    ).length,
-    outOfStock: allProducts.filter(product => 
-      product.stock === 0 || product.label?.toLowerCase() === 'soldout'
-    ).length
+    inStock: allProducts.filter(product => product.in_stock === true).length,
+    outOfStock: allProducts.filter(product => product.in_stock === false).length
   };
 
   const handleFilterChange = (newFilters) => {

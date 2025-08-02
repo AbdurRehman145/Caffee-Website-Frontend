@@ -19,7 +19,7 @@ export default function Footer() {
         <div className="footer-brand">
           <div className="brand-header">
             <span className="since-text">SINCE</span>
-            <h2 className="brand-name">ban's</h2>
+            <h2 className="brand-name">Ban's</h2>
             <span className="year-text">1998</span>
           </div>
           <p className="tagline">

@@ -9,7 +9,10 @@ const Banner = () => {
       <div className="banner-text">
         <h1>A ROSTED COFFEE FOR YOU</h1>
         <p>The coffee is brewed by first roasting the green coffee beans over hot coals in a brazier, given the best treatment.</p>
-        <button className="shop-now">SHOP NOW</button>
+        <a href="/shop">
+            <button className="shop-now">SHOP NOW</button>
+        </a>
+        
       </div>
     </div>
   );

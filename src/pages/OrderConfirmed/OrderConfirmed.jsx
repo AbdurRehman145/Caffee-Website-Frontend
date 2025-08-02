@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, ChevronDown, ChevronUp, Printer, Home } from 'lucide-react';
-import { useCart } from '../../components/CartDetails/CartContext';
+import { useCart } from '../../components/Contexts/CartContext';
 import { useCheckout } from '../../components/Contexts/CheckoutContext';
 import defaultProductImage from '../../assets/product1.png';
 import './OrderConfirmed.css';
@@ -27,9 +27,26 @@ export default function OrderConfirmed() {
   
   // Format estimated delivery date for display
   const formatDeliveryDate = (dateString) => {
-    if (!dateString) return 'May 20 - May 24, 2025';
+    if (!dateString) {
+      // Fallback to default date range if no date is provided
+      const today = new Date();
+      const startDate = new Date(today);
+      startDate.setDate(startDate.getDate() + 5); // 5 days from now
+      const endDate = new Date(today);
+      endDate.setDate(endDate.getDate() + 10); // 10 days from now
+      
+      const options = { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      };
+      
+      return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
+    }
     
-    const date = new Date(dateString);
+    // Parse the date string (YYYY-MM-DD format)
+    const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
+    
     const options = { 
       month: 'short', 
       day: 'numeric', 

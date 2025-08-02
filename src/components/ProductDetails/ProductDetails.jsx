@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProductDetails.css";
 import defaultProductImage from "../../assets/product1.png";
-import { useCart } from "../CartDetails/CartContext"; // Import our cart hook
+import { useCart } from "../../components/Contexts/CartContext"; // Import our cart hook
 
 const LoadingScreen = () => {
   return (
@@ -53,16 +53,11 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
   
-  // Handle add to cart
+  // Handle add to cart - only if product is in stock
   const handleAddToCart = () => {
-    if (product) {
+    if (product && product.in_stock) {
       addToCart(product, quantity);
       setShowModal(true);
-      
-      
-      // setTimeout(() => {
-      //   setShowModal(false);
-      // }, 5000);
     }
   };
   
@@ -113,6 +108,12 @@ const ProductDetails = () => {
             className="main-image"
             onError={(e) => (e.target.src = defaultProductImage)}
           />
+          {/* Out of stock overlay */}
+          {!product.in_stock && (
+            <div className="out-of-stock-overlay">
+              <span className="out-of-stock-label">OUT OF STOCK</span>
+            </div>
+          )}
         </div>
 
         {/* Product Info Section */}
@@ -124,17 +125,38 @@ const ProductDetails = () => {
             ${product.price}
           </p>
 
+          {/* Stock status indicator */}
+          <div className="stock-status">
+            <span className={`stock-indicator ${product.in_stock ? 'in-stock' : 'out-of-stock'}`}>
+              {product.in_stock ? 'In Stock' : 'Out of Stock'}
+            </span>
+          </div>
+
           <div className="quantity-control">
             <label>Quantity</label>
             <div className="controls">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+              <button 
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={!product.in_stock}
+              >
+                -
+              </button>
               <span>{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)}>+</button>
+              <button 
+                onClick={() => setQuantity(quantity + 1)}
+                disabled={!product.in_stock}
+              >
+                +
+              </button>
             </div>
           </div>
 
-          <button className="add-to-cart" onClick={handleAddToCart}>
-            ADD TO CART
+          <button 
+            className={`add-to-cart ${!product.in_stock ? 'disabled' : ''}`}
+            onClick={handleAddToCart}
+            disabled={!product.in_stock}
+          >
+            {product.in_stock ? 'ADD TO CART' : 'OUT OF STOCK'}
           </button>
 
           {/* Details Section */}
@@ -166,7 +188,7 @@ const ProductDetails = () => {
                 <h3>Product Added to Cart!</h3>
                 <p>{product.name} has been added to your cart.</p>
                 <div className="modal-actions">
-                  <button className="continue-shopping" onClick={closeModal}>
+                  <button className="continue-shopping-m" onClick={closeModal}>
                     CONTINUE SHOPPING
                   </button>
                   <button className="view-cart" onClick={goToCart}>

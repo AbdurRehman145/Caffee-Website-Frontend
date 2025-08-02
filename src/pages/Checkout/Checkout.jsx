@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../../components/CartDetails/CartContext';
+import { useCart } from '../../components/Contexts/CartContext';
 import { useCheckout } from '../../components/Contexts/CheckoutContext';
 import defaultProductImage from '../../assets/product1.png';
 import './Checkout.css';
@@ -18,16 +18,17 @@ export default function CheckoutPage() {
 
   const [formErrors, setFormErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    email: checkoutData.customerDetails.email || '',
-    firstName: checkoutData.customerDetails.firstName || '',
-    lastName: checkoutData.customerDetails.lastName || '',
-    mobile: checkoutData.customerDetails.mobile || '',
-    address: checkoutData.customerDetails.address || '',
-    country: checkoutData.customerDetails.country || 'Pakistan',
-    region: checkoutData.customerDetails.region || 'Islamabad Capital Territory',
-    city: checkoutData.customerDetails.city || 'Islamabad',
+    email: checkoutData.customerDetails.email,
+    firstName: checkoutData.customerDetails.firstName ,
+    lastName: checkoutData.customerDetails.lastName ,
+    mobile: checkoutData.customerDetails.mobile,
+    address: checkoutData.customerDetails.address,
+    country: checkoutData.customerDetails.country,
+    region: checkoutData.customerDetails.region,
+    city: checkoutData.customerDetails.city ,
     shippingMethod: 'International Shipping',
     paymentMethod: 'COD'
   });
@@ -111,6 +112,9 @@ export default function CheckoutPage() {
       return;
     }
     
+    // Show loading screen
+    setIsLoading(true);
+    
     try {
       // Update checkout data with form values
       updateCheckoutData({
@@ -126,7 +130,6 @@ export default function CheckoutPage() {
         }
       });
       
-     
       // Prepare totals object with voucher info and selected methods
       const totals = {
         subtotal,
@@ -154,11 +157,23 @@ export default function CheckoutPage() {
       setSubmitError(
         error.message || 'Failed to place order. Please try again.'
       );
+    } finally {
+      // Hide loading screen
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="checkout-container-checkout">
+      {/* Loading Screen */}
+      {isLoading && (
+        <div className="loading-screen">
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="checkout-form-checkout">
         {submitError && (
           <div className="error-message" style={{ 
@@ -406,12 +421,12 @@ export default function CheckoutPage() {
             margin: '20px auto', 
             display: 'block', 
             width: '100%',
-            opacity: isSubmitting ? 0.6 : 1,
-            cursor: isSubmitting ? 'not-allowed' : 'pointer'
+            opacity: isSubmitting || isLoading ? 0.6 : 1,
+            cursor: isSubmitting || isLoading ? 'not-allowed' : 'pointer'
           }}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isLoading}
         >
-          {isSubmitting ? 'PLACING ORDER...' : 'PLACE YOUR ORDER'}
+          {isSubmitting || isLoading ? 'PLACING ORDER...' : 'PLACE YOUR ORDER'}
         </button>
       </form>
 

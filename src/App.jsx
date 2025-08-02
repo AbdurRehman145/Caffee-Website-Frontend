@@ -10,7 +10,7 @@ import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import OrderConfirmed from './pages/OrderConfirmed/OrderConfirmed';
 import ProductDetails from './components/ProductDetails/ProductDetails';
-import { CartProvider  } from "./components/CartDetails/CartContext"; 
+import { CartProvider  } from "./components/Contexts/CartContext"; 
 import { CheckoutProvider } from './components/Contexts/CheckoutContext';
 
 const App = () => {

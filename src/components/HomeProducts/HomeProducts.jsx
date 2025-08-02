@@ -8,17 +8,20 @@ const HomeProducts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const maxIndex = Math.max(0, Math.ceil(products.length / 4) - 1) * 0.3;
+  // Calculate how many products to show at once and max scroll position
+  const itemsToShow = 4;
+  const maxIndex = Math.max(0, products.length - itemsToShow);
 
   const scroll = (direction) => {
     if (direction === 'left' && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 0.3);
+      setCurrentIndex(Math.max(0, currentIndex - 1));
     } else if (direction === 'right' && currentIndex < maxIndex) {
-      setCurrentIndex(currentIndex + 0.3);
+      setCurrentIndex(Math.min(maxIndex, currentIndex + 1));
     }
   };
 
-  const translateX = -currentIndex * 89;
+  // Use consistent percentage-based calculation
+  const translateX = products.length > 0 ? -(currentIndex * (100 / products.length)) : 0;
 
   useEffect(() => {
     fetch('http://localhost:5000/products')
@@ -29,7 +32,6 @@ const HomeProducts = () => {
         return res.json();
       })
       .then((data) => {
-       
         if (Array.isArray(data)) {
           setProducts(data);
         } else {
@@ -69,7 +71,7 @@ const HomeProducts = () => {
       <p>Choose your coffee</p>
       <div className="carousel-container">
         <button 
-          className="arrow-prod left" 
+          className="arrow-prod left"
           onClick={() => scroll('left')}
           disabled={currentIndex <= 0}
         >
@@ -87,8 +89,8 @@ const HomeProducts = () => {
                   <div className="image-wrapper">
                     <a href={`/products/${product.id}`}>
                       <img 
-                        src={product.image || defaultProductImage} 
-                        alt={product.name} 
+                        src={product.image || defaultProductImage}
+                        alt={product.name}
                         onError={(e) => {
                           e.target.src = defaultProductImage;
                         }}
@@ -115,7 +117,7 @@ const HomeProducts = () => {
         </div>
 
         <button 
-          className="arrow-prod right" 
+          className="arrow-prod right"
           onClick={() => scroll('right')}
           disabled={currentIndex >= maxIndex}
         >

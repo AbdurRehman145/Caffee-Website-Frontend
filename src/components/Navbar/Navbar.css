@@ -10,17 +10,19 @@
 .logo {
   display: flex;
   align-items: center;
-  font-size: 20px;
 }
 
 .logo span {
   margin-right: 5px;
+  font-size: 15px;
 }
 
 .brand {
   font-style: italic;
   font-weight: bold;
+  font-size: 25px;
   color: #d35400;
+  margin-right: 4px;
 }
 
 .nav-links {

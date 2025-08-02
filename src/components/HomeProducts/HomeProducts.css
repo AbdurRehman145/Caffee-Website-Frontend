@@ -130,15 +130,17 @@
     transform: translateY(-50%);
     z-index: 10;
     padding-bottom: 2px;
+    margin-left: 30px; /* Maintain 30px distance from the left */
+    margin-right: 40px; /* Maintain 30px distance from the right */
   }
   
   .arrow-prod.left {
-    left: 160px;
+    left: 0px;
   }
   
   .arrow-prod.right {
-    right: 170px;
-  }
+    right: 0px;
+  } 
   
   .arrow-prod:hover {
     background-color: #232323;

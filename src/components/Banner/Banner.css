@@ -2,12 +2,16 @@
   position: relative;
   text-align: center;
   color: white;
-  
+  overflow: hidden;
+  min-height: 400px; /* Minimum height for very small screens */
 }
 
 .banner-image {
   width: 100%;
-  height: 650px;
+  height: 100%;
+  object-fit: cover; /* This prevents stretching and maintains aspect ratio */
+  object-position: center; /* Centers the image within the container */
+  min-height: 650px; /* Maintains your desired height on larger screens */
 }
 
 .banner-text {
@@ -17,16 +21,20 @@
   transform: translate(-50%, -50%);
   text-align: left;
   color: black;
+  max-width: 90%; /* Prevents text from going off-screen on small devices */
+  padding: 20px;
 }
 
 .banner-text h1 {
-  font-size: 3em;
+  font-size: clamp(2rem, 5vw, 3rem); /* Responsive font size */
   margin: 0;
+  line-height: 1.2;
 }
 
 .banner-text p {
-  font-size: 1.2em;
-  margin: 10px 0;
+  font-size: clamp(1rem, 2.5vw, 1.2rem); /* Responsive font size */
+  margin: 20px 0;
+  line-height: 1.4;
 }
 
 .shop-now {
@@ -35,9 +43,33 @@
   padding: 10px 20px;
   border: none;
   cursor: pointer;
-  font-size: 1em;
+  font-size: clamp(0.9rem, 2vw, 1rem); /* Responsive font size */
+  transition: background-color 0.3s ease;
 }
 
 .shop-now:hover {
   background-color: #333;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .banner-text {
+    left: 50%; /* Center the text on mobile */
+    text-align: center;
+    padding: 15px;
+  }
+  
+  .banner-image {
+    min-height: 400px; /* Smaller minimum height for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-text {
+    padding: 10px;
+  }
+  
+  .banner-image {
+    min-height: 300px;
+  }
 }

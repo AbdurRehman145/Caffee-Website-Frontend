@@ -35,7 +35,6 @@ export function CheckoutProvider({ children }) {
   };
 
   // Function to generate order number and set estimated delivery
-  // Function to generate order number and set estimated delivery
   const confirmOrder = () => {
     // Generate random order number
     const orderNumber = '#ORD-' + Math.floor(10000 + Math.random() * 90000);
@@ -53,9 +52,8 @@ export function CheckoutProvider({ children }) {
       }
     }
     
-    // Format as ISO string for database storage
-    const estimatedDelivery = deliveryDate.toISOString();
-
+    // Format as date-only string (YYYY-MM-DD) to avoid time zone issues
+    const estimatedDelivery = deliveryDate.toISOString().split('T')[0];
         
     updateCheckoutData({
       orderNumber,
@@ -66,7 +64,6 @@ export function CheckoutProvider({ children }) {
   };
 
   // Function to submit order to database
-   // In your CheckoutContext.jsx, update the submitOrder function
 
 const submitOrder = async (cartItems, totals, customerDetails) => {
   if (isSubmitting) return;
@@ -107,14 +104,14 @@ const submitOrder = async (cartItems, totals, customerDetails) => {
 
     // Prepare order items data for database
     const orderItemsData = cartItems.map(item => ({
-      product_id: item.id || item.product_id, // Use product ID from cart item
+      product_id: item.id || item.product_id,
       product_name: item.name,
       quantity: item.quantity,
       price: item.price,
     }));
 
-    // UPDATE THIS LINE: Change '/orders' to your actual backend URL
-    const response = await fetch('http://localhost:5000/orders', { // or your backend URL
+    
+    const response = await fetch('http://localhost:5000/orders', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
